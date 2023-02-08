@@ -1,18 +1,18 @@
 import numpy as np
-import heapq
+import heapq as hq
 from typing import Union
+import random
 
 class Graph:
 
     def __init__(self, adjacency_mat: Union[np.ndarray, str]):
-        """
-    
+        """ 
         Unlike the BFS assignment, this Graph class takes an adjacency matrix as input. `adjacency_mat` 
         can either be a 2D numpy array of floats or a path to a CSV file containing a 2D numpy array of floats.
 
         In this project, we will assume `adjacency_mat` corresponds to the adjacency matrix of an undirected graph.
-    
         """
+
         if type(adjacency_mat) == str:
             self.adj_mat = self._load_adjacency_matrix_from_csv(adjacency_mat)
         elif type(adjacency_mat) == np.ndarray:
@@ -27,11 +27,10 @@ class Graph:
             return np.loadtxt(f, delimiter=',')
 
 
-      def _get_edges(self, idx):
+    def _get_edges(self, idx: int):
         """ 
         Takes in index of adjacency matrix and returns list of outgoing edges
-        Edges are tuples in format (edge weight, destination node)
-        
+        Edges are tuples in format (edge weight, destination node)   
         """
         
         adj=self.adj_mat
@@ -59,13 +58,18 @@ class Graph:
         """
         adj=self.adj_mat
 
+
+        if adj.shape[0]!=adj.shape[1]:
+            raise Exception(f"Adjacency matrix differs in # of rows and columns!")
+        
+        if adj.size<=1:
+            raise Exception(f"Graph has 1 or fewer nodes!")
+
         #init mst adjacency matrix
         mst=np.zeros(adj.shape)
         
-        #pick random node to start 
+        #pick random node to start and add to visited
         init_node=random.randint(0, adj.shape[0]-1)
-
-        #add first node to visisted      
         visited=[init_node]
         
         #store all outgoing edges from visited in a priority queue
@@ -74,19 +78,17 @@ class Graph:
         hq.heapify(edge_queue)
       
         prev_node=init_node
-        #while not all vertices in visited 
+        #loop through until all vertices visited
         while len(visited)<adj.shape[0]:
             
             #pop lowest weight edge from priority queue 
             edge, node=hq.heappop(edge_queue)
 
-            
             #check if destination node of edge in visited
             if node not in visited:
 
                 #add edge to mst
                 mst[visited[-1], node]=edge
-            
                 #add destination node to visited
                 visited.append(node)
                 
@@ -94,9 +96,12 @@ class Graph:
                 for i in self._get_edges(node): 
                     hq.heappush(edge_queue, i) 
  
-        
+           
+        #check that total number of edges is equal to nodes-1
+        if np.count_nonzero(mst)!=(adj.shape[0]-1):
+            raise Exception(f"Total number of MST edges not equal to (nodes-1). Something is wrong!")
         
         #make sure mst is symmetric!
-        mst=np.triu(mst) + np.tril(mst.T, 1)
+        mst=np.maximum(mst, mst.T)
         
         self.mst = mst
