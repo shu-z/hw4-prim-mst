@@ -36,20 +36,47 @@ def check_mst(adj_mat: np.ndarray,
     assert approx_equal(total, expected_weight), 'Proposed MST has incorrect expected weight'
 
 
-    def num_edges():
-        assert ((adj_mat.shape[0]-1) == np.count_nonzero(np.triu(mst))), 'Proposed MST does not have correct number of edges'
 
-    def num_nodes():
-        pass
+    def bfs(graph, start):
+        """
+        BFS adapted from HW2 to check if graph is fully connected
+        """
+       
+        queue=[start]
+        visited=[start]
 
+        while queue:
+            #pop first element of queue and get neighbors
+            v=queue.pop(0)
+            N=np.where(graph[v]!=0)[0] 
 
+            #check each neighbor of current node
+            for w in N:
+                if w not in visited:
+                    #add new frontier nodes to queue and visited
+                    queue.append(w)
+                    visited.append(w)
+        #return list of nodes with order of BFS traversal
+        return(visited)
+    
 
+    #check fully connected mst
+    bfs_visited=bfs(mst, 0)
+    bfs_visited.sort()
+    assert(bfs_visited==list(range(0, adj_mat.shape[0]))), 'Proposed MST is not fully connected'
+    
+    #check edges mst
+    assert ((adj_mat.shape[0]-1) == np.count_nonzero(np.triu(mst))), 'Proposed MST does not have correct number of edges'
+
+    #check symmetric mst
+    assert(np.allclose(mst, mst.T)), 'Proposed MST is not symmetric'
+           
+
+  
 
 def test_mst_small():
     """
-    
-    Unit test for the construction of a minimum spanning tree on a small graph.
-    
+    Unit test for the construction of a minimum spanning tree on a small graph.  
     """
     file_path = './data/small.csv'
     g = Graph(file_path)
@@ -59,12 +86,10 @@ def test_mst_small():
 
 def test_mst_single_cell_data():
     """
-    
     Unit test for the construction of a minimum spanning tree using single cell
     data, taken from the Slingshot R package.
 
     https://bioconductor.org/packages/release/bioc/html/slingshot.html
-
     """
     file_path = './data/slingshot_example.txt'
     coords = np.loadtxt(file_path) # load coordinates of single cells in low-dimensional subspace
@@ -74,7 +99,7 @@ def test_mst_single_cell_data():
     check_mst(g.adj_mat, g.mst, 57.263561605571695)
 
 
-def test_mst_student():
+def test_mst_edgecase():
     """
     TODO: Write at least one unit test for MST construction.
     Unit test for edge cases 

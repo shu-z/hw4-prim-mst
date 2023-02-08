@@ -22,14 +22,16 @@ class Graph:
         self.mst = None
 
 
+
     def _load_adjacency_matrix_from_csv(self, path: str) -> np.ndarray:
         with open(path) as f:
             return np.loadtxt(f, delimiter=',')
 
 
+
     def _get_edges(self, idx: int):
         """ 
-        Takes in index of adjacency matrix and returns list of outgoing edges
+        Takes in index of node in adjacency matrix and returns list of outgoing edges
         Edges are tuples in format (edge weight, destination node)   
         """
         
@@ -56,10 +58,10 @@ class Graph:
         use of priority queues in your implementation. Refer to the heapq module, particularly the 
         `heapify`, `heappop`, and `heappush` functions.
         """
+
         adj=self.adj_mat
 
-  
-
+        #checks for adj mat
         if adj.size<=1:
             raise Exception(f"Graph has 1 or fewer nodes!")
         
@@ -70,8 +72,7 @@ class Graph:
             raise Exception(f"Adjacency matrix is not symmetric!")
         
         
-
-        #init mst adjacency matrix
+        #init mst adj mat
         mst=np.zeros(adj.shape)
         
         #pick random node to start and add to visited
@@ -84,7 +85,7 @@ class Graph:
         hq.heapify(edge_queue)
       
         prev_node=init_node
-        #loop through until all vertices visited
+        #loop through until all nodes visited
         while len(visited)<adj.shape[0]:
             
             #pop lowest weight edge from priority queue 
