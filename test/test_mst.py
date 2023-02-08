@@ -36,6 +36,15 @@ def check_mst(adj_mat: np.ndarray,
     assert approx_equal(total, expected_weight), 'Proposed MST has incorrect expected weight'
 
 
+    def num_edges():
+        assert ((adj_mat.shape[0]-1) == np.count_nonzero(np.triu(mst))), 'Proposed MST does not have correct number of edges'
+
+    def num_nodes():
+        pass
+
+
+
+
 def test_mst_small():
     """
     
@@ -67,8 +76,21 @@ def test_mst_single_cell_data():
 
 def test_mst_student():
     """
-    
     TODO: Write at least one unit test for MST construction.
-    
+    Unit test for edge cases 
     """
-    pass
+
+    #test 1 node graph
+    with pytest.raises(Exception, match='Graph has 1 or fewer nodes!'):
+        g_single_node = Graph(np.array([0]))
+        g_single_node.construct_mst()
+
+    #test nonsymmetric graph
+    with pytest.raises(Exception, match='Adjacency matrix is not symmetric!'):
+        asymmetric_array=np.array([(0,4,3),(1,0,5),(2,4,0)])
+        g_asymm = Graph(asymmetric_array)
+        g_asymm.construct_mst()
+    #  
+
+
+    

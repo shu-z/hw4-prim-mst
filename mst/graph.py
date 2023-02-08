@@ -58,12 +58,18 @@ class Graph:
         """
         adj=self.adj_mat
 
+  
 
+        if adj.size<=1:
+            raise Exception(f"Graph has 1 or fewer nodes!")
+        
         if adj.shape[0]!=adj.shape[1]:
             raise Exception(f"Adjacency matrix differs in # of rows and columns!")
         
-        if adj.size<=1:
-            raise Exception(f"Graph has 1 or fewer nodes!")
+        if np.allclose(adj, adj.T) == False:
+            raise Exception(f"Adjacency matrix is not symmetric!")
+        
+        
 
         #init mst adjacency matrix
         mst=np.zeros(adj.shape)
