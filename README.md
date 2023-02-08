@@ -1,3 +1,6 @@
+![BuildStatus](https://github.com/shu-z/hw4-prim-mst/actions/workflows/main.yml/badge.svg)
+
+
 # HW 4: Prim's algorithm
 
 In this assignment, you'll implement Prim's algorithm, a non-trivial greedy algorithm used to construct minimum spanning trees. 
